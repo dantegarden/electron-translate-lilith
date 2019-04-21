@@ -19,51 +19,51 @@
 </template>
 
 <script>
-    import {formatTime, parseTime} from '@/utils/index'
+    import { formatTime, parseTime } from '@/utils/index'
 
     export default {
-        data() {
-            return {
-                novelId: '',
-                chapterId: '',
-                chapterInfo: {},
-                sentenceList: [],
-                tranSentenceList: [],
-                noSentenceFlag: false,
-            }
-        },
-        methods: {
-            getTranSentences(){
-                var chapterInfo = this.$db.get('chapter')
-                    .find({id: this.chapterId}).value();
-                this.chapterInfo = chapterInfo
-                var sentenceList = this.$db.get('raw_sentence')
-                    .filter({chapterId: this.chapterId})
-                    .orderBy("updateTime").value();
-                if(sentenceList){
-                    this.sentenceList = sentenceList;
-                    var tranSentenceList = []
-                    sentenceList.forEach(rawSentence => {
-                        let tranSentence = this.getTransSentenceByRawId(rawSentence.id)
-                        if(tranSentence && tranSentence.textline.trim()){
-                            tranSentenceList.push(tranSentence)
-                        }
-                    })
-                    this.tranSentenceList = tranSentenceList
-                }else{
-                    this.noSentenceFlag = true;
-                }
-            },
-            getTransSentenceByRawId(id){
-                return this.$db.get('trans_sentence')
-                    .find({rawSentenceId: id}).value()
-            },
-        },
-        created(){
-            this.chapterId = this.$route.query.id
-            this.novelId = this.$route.query.novelId
-            this.getTranSentences();
+      data() {
+        return {
+          novelId: '',
+          chapterId: '',
+          chapterInfo: {},
+          sentenceList: [],
+          tranSentenceList: [],
+          noSentenceFlag: false
         }
+      },
+      methods: {
+        getTranSentences() {
+          var chapterInfo = this.$db.get('chapter')
+            .find({ id: this.chapterId }).value()
+          this.chapterInfo = chapterInfo
+          var sentenceList = this.$db.get('raw_sentence')
+            .filter({ chapterId: this.chapterId })
+            .orderBy('updateTime').value()
+          if (sentenceList) {
+            this.sentenceList = sentenceList
+            var tranSentenceList = []
+            sentenceList.forEach(rawSentence => {
+              const tranSentence = this.getTransSentenceByRawId(rawSentence.id)
+              if (tranSentence && tranSentence.textline.trim()) {
+                tranSentenceList.push(tranSentence)
+              }
+            })
+            this.tranSentenceList = tranSentenceList
+          } else {
+            this.noSentenceFlag = true
+          }
+        },
+        getTransSentenceByRawId(id) {
+          return this.$db.get('trans_sentence')
+            .find({ rawSentenceId: id }).value()
+        }
+      },
+      created() {
+        this.chapterId = this.$route.query.id
+        this.novelId = this.$route.query.novelId
+        this.getTranSentences()
+    }
     }
 </script>
 

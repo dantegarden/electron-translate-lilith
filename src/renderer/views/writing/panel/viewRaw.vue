@@ -19,38 +19,38 @@
 </template>
 
 <script>
-    import {formatTime, parseTime} from '@/utils/index'
+    import { formatTime, parseTime } from '@/utils/index'
 
     export default {
-        data() {
-            return {
-                novelId: '',
-                chapterId: '',
-                chapterInfo: {},
-                sentenceList: [],
-                noSentenceFlag: false,
-            }
-        },
-        methods: {
-            getSentences(){
-                var chapterInfo = this.$db.get('chapter')
-                    .find({id: this.chapterId}).value();
-                this.chapterInfo = chapterInfo
-                var sentenceList = this.$db.get('raw_sentence')
-                    .filter({chapterId: this.chapterId})
-                    .orderBy("updateTime").value();
-                if(sentenceList){
-                    this.sentenceList = sentenceList;
-                }else{
-                    this.noSentenceFlag = true;
-                }
-            }
-        },
-        created(){
-            this.chapterId = this.$route.query.id
-            this.novelId = this.$route.query.novelId
-            this.getSentences();
+      data() {
+        return {
+          novelId: '',
+          chapterId: '',
+          chapterInfo: {},
+          sentenceList: [],
+          noSentenceFlag: false
         }
+      },
+      methods: {
+        getSentences() {
+          var chapterInfo = this.$db.get('chapter')
+            .find({ id: this.chapterId }).value()
+          this.chapterInfo = chapterInfo
+          var sentenceList = this.$db.get('raw_sentence')
+            .filter({ chapterId: this.chapterId })
+            .orderBy('updateTime').value()
+          if (sentenceList) {
+            this.sentenceList = sentenceList
+          } else {
+            this.noSentenceFlag = true
+          }
+        }
+      },
+      created() {
+        this.chapterId = this.$route.query.id
+        this.novelId = this.$route.query.novelId
+        this.getSentences()
+    }
     }
 </script>
 

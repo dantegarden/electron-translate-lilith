@@ -24,9 +24,9 @@ function createWindow() {
     useContentSize: true,
     fullscreenable: true, // 是否允许全屏
     resizable: true, // 是否允许拉伸大小
-    center: true, // 是否出现在屏幕居中的位置
+    center: true // 是否出现在屏幕居中的位置
   })
-  mainWindow.openDevTools();
+  mainWindow.openDevTools()
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
@@ -34,10 +34,10 @@ function createWindow() {
   })
 }
 
-//当electron完成初始化后触发
+// 当electron完成初始化后触发
 app.on('ready', createWindow)
 
-//所有窗口都关闭的时候触发
+// 所有窗口都关闭的时候触发
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()

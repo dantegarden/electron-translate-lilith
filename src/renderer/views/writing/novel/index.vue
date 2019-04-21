@@ -21,12 +21,7 @@
                     {{scope.row.novelName}}
                 </template>
             </el-table-column>
-            <el-table-column label="原文章节数" width="110" align="center">
-                <template slot-scope="scope">
-                    <span>{{scope.row.rawChapterNum}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="译文章节数" width="110" align="center">
+            <el-table-column label="章节数" width="110" align="center">
                 <template slot-scope="scope">
                     {{scope.row.chapterNum}}
                 </template>
@@ -79,73 +74,72 @@
 </template>
 
 <script>
-    import {formatTime, parseTime} from '@/utils/index'
+    import { formatTime, parseTime } from '@/utils/index'
     export default {
-        data() {
-            return {
-                novelList: null,
-                listLoading: true,
-                queryCondition: {
-                    novelName : '',
-                },
-                dialogFormVisible: false,
-                tempNovel: {
-                    novelName: '',
-                    rawChapterNum: 0,
-                    chapterNum: 0,
-                    rawSentenceNum: 0,
-                    sentenceNum: 0,
-                    wordsNum: 0,
-                    updateTime: ''
-                }
-            }
-        },
-        created() {
-            this.getNovelList()
-        },
-        methods: {
-            getNovelList(){
-                this.listLoading = true;
-                let cond = this.queryCondition.novelName? this.queryCondition: {}
-                let list = this.$db.get('novel')
-                    .filter(cond).sortBy('updateTime')
-                    .value()
-                if(list){
-                    this.novelList = list;
-                }
-                this.listLoading = false;
-            },
-            query(){
-                this.getNovelList()
-            },
-            add(){
-                this.tempNovel.novelName = '';
-                this.dialogFormVisible = true
-            },
-            createNovel(){
-                this.tempNovel.updateTime = parseTime(new Date());
-                this.$db.get('novel')
-                    .insert(this.tempNovel)
-                    .write()
-                this.dialogFormVisible = false
-                this.getNovelList()
-            },
-            update(id){
-                this.$router.push({path:"/writing/chapter", query:{id: id}})
-            },
-            remove(id){
-                this.$confirm('确定删除此作品?', '提示', {
-                    confirmButtonText: '确定',
-                    showCancelButton: false,
-                    type: 'warning'
-                }).then(() => {
-                    this.$db.get('novel')
-                        .remove({id:id})
-                        .write()
-                    this.getNovelList();
-                    this.$message.success("删除成功");
-                })
-            }
+      data() {
+        return {
+          novelList: null,
+          listLoading: true,
+          queryCondition: {
+            novelName: ''
+          },
+          dialogFormVisible: false,
+          tempNovel: {
+            novelName: '',
+            chapterNum: 0,
+            rawSentenceNum: 0,
+            sentenceNum: 0,
+            wordsNum: 0,
+            updateTime: ''
+          }
         }
+      },
+      created() {
+        this.getNovelList()
+      },
+      methods: {
+        getNovelList() {
+          this.listLoading = true
+          const cond = this.queryCondition.novelName ? this.queryCondition : {}
+          const list = this.$db.get('novel')
+            .filter(cond).sortBy('updateTime')
+            .value()
+          if (list) {
+            this.novelList = list
+          }
+          this.listLoading = false
+        },
+        query() {
+          this.getNovelList()
+        },
+        add() {
+          this.tempNovel.novelName = ''
+          this.dialogFormVisible = true
+        },
+        createNovel() {
+          this.tempNovel.updateTime = parseTime(new Date())
+          this.$db.get('novel')
+            .insert(this.tempNovel)
+            .write()
+          this.dialogFormVisible = false
+          this.getNovelList()
+        },
+        update(id) {
+          this.$router.push({ path: '/writing/chapter', query: { id: id }})
+        },
+        remove(id) {
+          this.$confirm('确定删除此作品?', '提示', {
+            confirmButtonText: '确定',
+            showCancelButton: false,
+            type: 'warning'
+          }).then(() => {
+            this.$db.get('novel')
+              .remove({ id: id })
+              .write()
+            this.getNovelList()
+            this.$message.success('删除成功')
+          })
+        }
+      }
     }
 </script>

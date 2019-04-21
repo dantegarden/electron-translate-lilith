@@ -85,43 +85,41 @@ export const constantRouterMap = [
         path: 'chapter',
         name: 'Chapter',
         component: () => import('@/views/writing/chapter/index'),
-        meta: { title: '章节管理', icon: 'form' , },
+        meta: { title: '章节管理', icon: 'form' },
         hidden: true
       },
       {
-          path: 'addRaw',
-          name: 'AddRaw',
-          component: () => import('@/views/writing/panel/addRaw'),
-          meta: { title: '导入原文', icon: 'form' , },
-          hidden: true
+        path: 'addRaw',
+        name: 'AddRaw',
+        component: () => import('@/views/writing/panel/addRaw'),
+        meta: { title: '导入原文', icon: 'form' },
+        hidden: true
       },
       {
-          path: 'viewRaw',
-          name: 'ViewRaw',
-          component: () => import('@/views/writing/panel/viewRaw'),
-          meta: { title: '查看原文', icon: 'form' , },
-          hidden: true
+        path: 'viewRaw',
+        name: 'ViewRaw',
+        component: () => import('@/views/writing/panel/viewRaw'),
+        meta: { title: '查看原文', icon: 'form' },
+        hidden: true
       },
       {
         path: 'viewTrans',
         name: 'ViewTrans',
         component: () => import('@/views/writing/panel/viewTrans'),
-        meta: { title: '译文预览', icon: 'form' , },
+        meta: { title: '译文预览', icon: 'form' },
         hidden: true
-       },
+      },
       {
-          path: 'work',
-          name: 'Work',
-          component: () => import('@/views/writing/panel/work'),
-          meta: { title: '翻译工作台', icon: 'form' , },
-          hidden: true
+        path: 'work',
+        name: 'Work',
+        component: () => import('@/views/writing/panel/work'),
+        meta: { title: '翻译工作台', icon: 'form' },
+        hidden: true
       }
     ]
   },
   { path: '*', redirect: '/404', hidden: true }
 ]
-
-
 
 export default new Router({
   // mode: 'history', //后端支持可开

@@ -10,7 +10,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-import '@/extends' //extends
+import '@/extends' // extends
 
 import '@/icons' // icon
 import '@/permission' // permission control

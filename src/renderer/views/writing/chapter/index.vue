@@ -82,89 +82,99 @@
 </template>
 
 <script>
-    import {formatTime, parseTime} from '@/utils/index'
+    import { formatTime, parseTime } from '@/utils/index'
     export default {
-        data() {
-            return {
-                novelId: '',
-                chapterList: [],
-                listLoading: true,
-                queryCondition: {
-                    chapterName: ''
-                },
-                dialogFormVisible: false,
-                tempChapter: {
-                    chapterNo: 0,
-                    chapterName: '',
-                    rawSentenceNum: 0,
-                    sentenceNum: 0,
-                    wordsNum: 0,
-                    workONRow: 0, //目前进行到第几句（下一个要完成句子的编号）
-                    updateTime: '',
-                    novelId: '',
+      data() {
+        return {
+          novelId: '',
+          chapterList: [],
+          listLoading: true,
+          queryCondition: {
+            chapterName: ''
+          },
+          dialogFormVisible: false,
+          tempChapter: {
+            chapterNo: 0,
+            chapterName: '',
+            rawSentenceNum: 0,
+            sentenceNum: 0,
+            wordsNum: 0,
+            workONRow: 0, // 目前进行到第几句（下一个要完成句子的编号）
+            updateTime: '',
+            novelId: ''
 
-                }
-            }
-        },
-        methods: {
-            getChapterList(){
-                this.listLoading = true;
-                let cond = this.queryCondition.chapterName? this.queryCondition: {}
-                cond.novelId = this.novelId
-                let list = this.$db.get('chapter')
-                    .filter(cond).sortBy('chapterNo')
-                    .value()
-                if(list){
-                    this.chapterList = list;
-                }
-                this.listLoading = false;
-            },
-            query(){
-                this.getChapterList();
-            },
-            add(){
-                this.tempChapter.chapterName = '';
-                this.tempChapter.chapterNo = 1;
-                this.dialogFormVisible = true
-            },
-            createChapter(){
-                this.tempChapter.updateTime = parseTime(new Date());
-                this.$db.get('chapter')
-                    .insert(this.tempChapter)
-                    .write()
-                this.dialogFormVisible = false
-                this.getChapterList()
-            },
-            addRaw(id){
-                this.$router.push({path:"/writing/addRaw", query:{id: id, novelId: this.novelId}})
-            },
-            viewRaw(id){
-                this.$router.push({path:"/writing/viewRaw", query:{id: id, novelId: this.novelId}})
-            },
-            work(id){
-                this.$router.push({path:"/writing/work", query:{id: id, novelId: this.novelId}})
-            },
-            remove(id){
-                this.$confirm('确定删除此章节?', '提示', {
-                    confirmButtonText: '确定',
-                    showCancelButton: false,
-                    type: 'warning'
-                }).then(() => {
-                    this.$db.get('chapter')
-                        .remove({id:id})
-                        .write()
-                    this.getChapterList();
-                    this.$message.success("删除成功");
-                })
-            }
-        },
-        created: function(){
-            this.novelId = this.$route.query.id
-            this.tempChapter.novelId = this.novelId
-        },
-        mounted: function(){
-            this.getChapterList()
+          }
         }
+      },
+      methods: {
+        getChapterList() {
+          this.listLoading = true
+          const cond = this.queryCondition.chapterName ? this.queryCondition : {}
+          cond.novelId = this.novelId
+          const list = this.$db.get('chapter')
+            .filter(cond).sortBy('chapterNo')
+            .value()
+          if (list) {
+            this.chapterList = list
+          }
+          this.listLoading = false
+        },
+        query() {
+          this.getChapterList()
+        },
+        add() {
+          this.tempChapter.chapterName = ''
+          this.tempChapter.chapterNo = 1
+          this.dialogFormVisible = true
+        },
+        createChapter() {
+          this.tempChapter.updateTime = parseTime(new Date())
+          this.$db.get('chapter')
+            .insert(this.tempChapter)
+            .write()
+          let novelInfo = this.$db.get('novel').find({ id: this.novelId }).value()
+          this.$db.get('novel').find({ id: this.novelId }).assign({
+              chapterNum: novelInfo.chapterNum + 1,
+              updateTime: parseTime(new Date()) })
+            .write()
+          this.dialogFormVisible = false
+          this.getChapterList()
+        },
+        addRaw(id) {
+          this.$router.push({ path: '/writing/addRaw', query: { id: id, novelId: this.novelId }})
+        },
+        viewRaw(id) {
+          this.$router.push({ path: '/writing/viewRaw', query: { id: id, novelId: this.novelId }})
+        },
+        work(id) {
+          this.$router.push({ path: '/writing/work', query: { id: id, novelId: this.novelId }})
+        },
+        remove(id) {
+          this.$confirm('确定删除此章节?', '提示', {
+            confirmButtonText: '确定',
+            showCancelButton: false,
+            type: 'warning'
+          }).then(() => {
+            this.$db.get('chapter')
+              .remove({ id: id })
+              .write()
+            let novelInfo = this.$db.get('novel').find({ id: this.novelId }).value()
+            this.$db.get('novel').find({ id: this.novelId }).assign({
+              chapterNum: novelInfo.chapterNum - 1,
+              updateTime: parseTime(new Date()) })
+              .write()
+            this.getChapterList()
+            this.$message.success('删除成功')
+          })
+        }
+      },
+      created: function() {
+        this.novelId = this.$route.query.id
+        this.tempChapter.novelId = this.novelId
+      },
+      mounted: function() {
+        this.getChapterList()
+      }
     }
 </script>
 
