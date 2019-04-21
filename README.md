@@ -23,5 +23,3 @@ npm run lint
 npm run pack
 ```
 ---
-
-# electron-translate-lilith
