@@ -50,15 +50,28 @@
             <el-table-column align="center"  label="操作"  fixed="right">
                 <template slot-scope="scope">
                     <el-button-group>
-                        <el-button type="success" icon="edit"
-                                   @click="addRaw(scope.row.id)">导入原文</el-button>
-                        <el-button type="warning" icon="edit"
-                                   @click="viewRaw(scope.row.id)">查看原文</el-button>
-                        <el-button type="primary" icon="edit"
-                                   @click="work(scope.row.id)">翻译</el-button>
-                        <el-button type="danger" icon="delete"
-                                   @click="remove(scope.row.id)">删除</el-button>
+                        <el-tooltip class="item" effect="dark" content="导入原文" placement="top-start">
+                            <el-button type="success" icon="el-icon-edit" size="mini"
+                                   @click="addRaw(scope.row.id)" ></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="查看原文" placement="top-start">
+                            <el-button type="warning" icon="el-icon-view" size="mini"
+                                   @click="viewRaw(scope.row.id)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="翻译" placement="top-start">
+                            <el-button type="primary" icon="el-icon-tickets" size="mini"
+                                   @click="work(scope.row.id)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="查看译文" placement="top-start">
+                            <el-button type="warning" icon="el-icon-edit-outline" size="mini"
+                                   @click="viewTran(scope.row.id)"></el-button>
+                        </el-tooltip>
+                        <el-tooltip class="item" effect="dark" content="删除章节" placement="top-start">
+                            <el-button type="danger" icon="el-icon-delete" size="mini"
+                                   @click="remove(scope.row.id)"></el-button>
+                        </el-tooltip>
                     </el-button-group>
+
                 </template>
             </el-table-column>
         </el-table>
@@ -145,6 +158,9 @@
         },
         viewRaw(id) {
           this.$router.push({ path: '/writing/viewRaw', query: { id: id, novelId: this.novelId }})
+        },
+        viewTran(id){
+          this.$router.push({ path: '/writing/viewTrans', query: {id: id, novelId: this.novelId}})
         },
         work(id) {
           this.$router.push({ path: '/writing/work', query: { id: id, novelId: this.novelId }})
