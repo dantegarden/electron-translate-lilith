@@ -1,5 +1,5 @@
 import db from '../datastore'
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -26,12 +26,38 @@ function createWindow() {
     resizable: true, // 是否允许拉伸大小
     center: true // 是否出现在屏幕居中的位置
   })
-  mainWindow.openDevTools()
   mainWindow.loadURL(winURL)
-
+  mainWindow.openDevTools();
+  createMenu()
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+}
+
+function createMenu(){
+    if (process.env.NODE_ENV !== 'development') {
+        const template = [{
+            label: 'Edit',
+            submenu: [
+                { label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
+                { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+                { type: 'separator' },
+                { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+                { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+                { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+                { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' },
+                {
+                    label: 'Quit',
+                    accelerator: 'CmdOrCtrl+Q',
+                    click () {
+                        app.quit()
+                    }
+                }
+            ]
+        }]
+        const menu = Menu.buildFromTemplate(template)
+        Menu.setApplicationMenu(menu)
+    }
 }
 
 // 当electron完成初始化后触发

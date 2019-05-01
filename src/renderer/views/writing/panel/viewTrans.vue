@@ -4,14 +4,15 @@
             <el-col :span="6">CH-{{chapterInfo.chapterNo}} {{chapterInfo.chapterName}}</el-col>
             <el-col :span="4" :offset="12">
                 <el-button type="info" icon="el-icon-back" circle @click="$back"></el-button>
+                <el-button v-if="!noSentenceFlag" type="warning" icon="el-icon-download" circle @click="exportChapter"></el-button>
             </el-col>
 
         </el-row>
         <div class="markdown-content">
-            <p v-for="sentence in tranSentenceList" :key="sentence.id">
+            <el-row v-for="(sentence, index) in tranSentenceList" :key="sentence.id"  :title="'行号：'+ index">
                 <span v-if="sentence.type=='talk'" ><b>{{sentence.speaker}}:</b></span>
                 <span>{{sentence.textline}}</span>
-            </p>
+            </el-row>
 
         </div>
         <div v-if="noSentenceFlag">没有查询到翻译</div>
@@ -20,12 +21,14 @@
 
 <script>
     import { formatTime, parseTime } from '@/utils/index'
+    import exportUtil from '@/extends/export.js'
 
     export default {
       data() {
         return {
           novelId: '',
           chapterId: '',
+          novelInfo: {},
           chapterInfo: {},
           sentenceList: [],
           tranSentenceList: [],
@@ -33,7 +36,13 @@
         }
       },
       methods: {
+        getNovelInfo() {
+          var novelInfo = this.$db.get('novel')
+              .find({ id: this.novelId }).value()
+          this.novelInfo = novelInfo
+        },
         getTranSentences() {
+          this.getNovelInfo()
           var chapterInfo = this.$db.get('chapter')
             .find({ id: this.chapterId }).value()
           this.chapterInfo = chapterInfo
@@ -57,6 +66,19 @@
         getTransSentenceByRawId(id) {
           return this.$db.get('trans_sentence')
             .find({ rawSentenceId: id }).value()
+        },
+        exportChapter(){
+            let chapterObj = {
+                chapter: this.chapterInfo,
+                sentences: this.tranSentenceList
+            }
+            let chapterName = "CH-" + this.chapterInfo.chapterNo + this.chapterInfo.chapterName;
+            exportUtil.writeToLocal(this.novelInfo.novelName,
+                chapterName,
+                chapterObj
+            ).then(()=>{
+                this.$message.success("导出完成")
+            })
         }
       },
       created() {

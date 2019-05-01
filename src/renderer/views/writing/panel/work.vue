@@ -113,6 +113,7 @@
           TencentText: '',
           CaiyunText: '',
           MyText: '',
+          usedMark: false,
 
           currentStep: 4,
           currentRawRow: {},
@@ -211,6 +212,7 @@
           } else {
             this.MyText = old_tran_sentence.textline
           }
+          this.usedMark = false;
         },
         translate(text) {
           // translate.baidu(text).then(dst => {
@@ -223,11 +225,37 @@
             this.TencentText = dst
           })
         },
-        useTranslate(source) {
+        useTranslate(source){
           var text = ''
-          if (source == 'tencent') { text = this.TencentText } else if (source == 'caiyun') { text = this.CaiyunText } else if (source == 'mine') { text = this.MyText }
+          if (source == 'tencent') {
+              text = this.TencentText
+          } else if (source == 'caiyun') {
+              text = this.CaiyunText
+          } else if (source == 'mine') {
+              text = this.MyText
+          }
 
+          this.useText(text)
+        },
+        checkTypeTextline(text){
+            if(text){
+                const currentRaw = this.currentRawRow
+                if(currentRaw.textline.startsWith("「")){
+                    if(text.startsWith("“") && !text.endsWith("”")) text += "”";
+                    else if(!text.startsWith("“") && text.endsWith("”")) text = "“"+text;
+                    else if(!text.startsWith("“") && !text.endsWith("”")) text ="“" + text +  "”";
+                }
+                if(currentRaw.textline.startsWith("（")){
+                    if(text.startsWith("（") && !text.endsWith("）")) text += "）";
+                    else if(!text.startsWith("（") && text.endsWith("）")) text = "（"+text;
+                    else if(!text.startsWith("（") && !text.endsWith("）")) text ="（" + text +  "）";
+                }
+            }
+            return text
+        },
+        useText(text) {
           const currentRaw = this.currentRawRow
+          currentRaw.type == 'talk' ? (text = this.checkTypeTextline(text)) : null;
           const old_tran_sentence = this.$db.get('trans_sentence')
             .find({ rawSentenceId: currentRaw.id }).value()
           if (!old_tran_sentence) {
@@ -248,6 +276,7 @@
             old_tran_sentence.wordsNum = (old_tran_sentence.speaker ? old_tran_sentence.speaker.length : 0) + old_tran_sentence.textline.length
             this.updateTranSentence(old_tran_sentence, oldWordsNum)
           }
+          this.usedMark = true
           this.freshRawDisplay()
         },
         addTranSentence(sentence) { // 新增翻译句子
@@ -300,11 +329,18 @@
             .find({ rawSentenceId: id }).value()
         },
         nextRow() {
+          if(!this.usedMark && this.MyText){
+            this.useText(this.MyText)
+          }
           this.chapterInfo.workONRow++
           this.freshRawDisplay()
           this.freshWorkBench()
         },
         previousRow() {
+          if(!this.usedMark && this.MyText){
+            this.useText(this.MyText)
+            this.usedMark = true
+          }
           this.chapterInfo.workONRow--
           this.freshRawDisplay()
           this.freshWorkBench()
