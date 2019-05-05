@@ -9,10 +9,18 @@
 
         </el-row>
         <div class="markdown-content">
-            <el-row v-for="(sentence, index) in tranSentenceList" :key="sentence.id"  :title="'行号：'+ index">
-                <span v-if="sentence.type=='talk'" ><b>{{sentence.speaker}}:</b></span>
-                <span>{{sentence.textline}}</span>
-            </el-row>
+            <template  v-for="(sentence, index) in tranSentenceList" >
+                <template v-if="sentence.textline.indexOf('\r\n')>-1">
+                    <el-row v-for="sentence_part in sentence.textline.split('\r\n')">
+                        {{sentence_part}}
+                    </el-row>
+                </template>
+                <el-row v-else>
+                    <span v-if="sentence.type=='talk'" ><b>{{sentence.speaker}}:</b></span>
+                    <span>{{sentence.textline}}</span>
+                </el-row>
+            </template>
+
 
         </div>
         <div v-if="noSentenceFlag">没有查询到翻译</div>

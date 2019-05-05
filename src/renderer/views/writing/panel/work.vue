@@ -156,12 +156,12 @@
           if (this.chapterInfo.workONRow > this.currentStep) {
             var startIndex = this.chapterInfo.workONRow - this.currentStep
             var endIndex = this.chapterInfo.workONRow + this.currentStep
-            while (startIndex < endIndex) {
+            endIndex = (this.rawSentenceList.length > endIndex)?endIndex: this.rawSentenceList.length-1
+            while (startIndex <= endIndex) {
               const cloneSentence = Object.assign({}, this.rawSentenceList[startIndex])
               if (startIndex === workOnRowIndex) {
                 cloneSentence.current = true
               }
-              if (this.rawSentenceList.length > endIndex) {
                 displayRaws.push(cloneSentence)
 
                 let transSentence = this.getTransSentenceByRawId(cloneSentence.id)
@@ -174,7 +174,6 @@
                 displayTrans.push(transSentence)
 
                 startIndex++
-              }
             }
           } else {
             var startIndex = 0
@@ -202,17 +201,19 @@
         },
         freshWorkBench() {
           const currentRow = this.displayRaw.find(r => r.current)
-          this.currentRawRow = currentRow
-          this.currentRawText = currentRow.textline
-          this.translate(currentRow.textline)
-          const old_tran_sentence = this.$db.get('trans_sentence')
-            .find({ rawSentenceId: currentRow.id }).value()
-          if (!old_tran_sentence) {
-            this.MyText = ''
-          } else {
-            this.MyText = old_tran_sentence.textline
+          if(currentRow){
+              this.currentRawRow = currentRow
+              this.currentRawText = currentRow.textline
+              this.translate(currentRow.textline)
+              const old_tran_sentence = this.$db.get('trans_sentence')
+                  .find({ rawSentenceId: currentRow.id }).value()
+              if (!old_tran_sentence) {
+                  this.MyText = ''
+              } else {
+                  this.MyText = old_tran_sentence.textline
+              }
+              this.usedMark = false;
           }
-          this.usedMark = false;
         },
         translate(text) {
           // translate.baidu(text).then(dst => {
@@ -256,6 +257,7 @@
         useText(text) {
           const currentRaw = this.currentRawRow
           currentRaw.type == 'talk' ? (text = this.checkTypeTextline(text)) : null;
+          text = text.indexOf("\n")>-1?text.replace("\n","\r\n"):text;
           const old_tran_sentence = this.$db.get('trans_sentence')
             .find({ rawSentenceId: currentRaw.id }).value()
           if (!old_tran_sentence) {
@@ -329,6 +331,7 @@
             .find({ rawSentenceId: id }).value()
         },
         nextRow() {
+          if(this.rawSentenceList.length==this.chapterInfo.workONRow){this.$message.warning('到底啦！'); return;}
           if(!this.usedMark && this.MyText){
             this.useText(this.MyText)
           }
@@ -337,6 +340,7 @@
           this.freshWorkBench()
         },
         previousRow() {
+          if(1==this.chapterInfo.workONRow){this.$message.warning('到顶啦！'); return;}
           if(!this.usedMark && this.MyText){
             this.useText(this.MyText)
             this.usedMark = true

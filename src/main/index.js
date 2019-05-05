@@ -1,5 +1,5 @@
 import db from '../datastore'
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, ipcMain } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -27,7 +27,6 @@ function createWindow() {
     center: true // 是否出现在屏幕居中的位置
   })
   mainWindow.loadURL(winURL)
-  mainWindow.openDevTools();
   createMenu()
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -52,7 +51,14 @@ function createMenu(){
                     click () {
                         app.quit()
                     }
+                },
+                { type: 'separator' },
+                { label: 'Debug', accelerator: 'F12', click(){
+                    if(mainWindow){
+                        mainWindow.openDevTools();
+                    }
                 }
+                },
             ]
         }]
         const menu = Menu.buildFromTemplate(template)
@@ -95,3 +101,7 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
  */
+
+/**
+ * ipc 事件
+ * */

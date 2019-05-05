@@ -1,5 +1,6 @@
 var fs = require("fs")
 var path = require("path")
+var {shell} = require('electron')
 const output = "output"
 
 const writeToLocal = (novelName, chapterName, chapterObj) => new Promise((resolve, reject) => {
@@ -22,7 +23,8 @@ const writeToLocal = (novelName, chapterName, chapterObj) => new Promise((resolv
                 }
                 writeLine(relativeFileName, line.trim())
             })
-
+            console.log(path.resolve(relativeFileName))
+            shell.openExternal(path.resolve(relativeFileName))
             resolve(true)
 
         })

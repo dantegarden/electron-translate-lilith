@@ -171,12 +171,21 @@
             showCancelButton: false,
             type: 'warning'
           }).then(() => {
+            var chapterInfo = this.$db.get('chapter')
+                  .find({ id: id }).value()
             this.$db.get('chapter')
               .remove({ id: id })
               .write()
+            this.$db.get('raw_sentence')
+              .remove({ chapterId: id }).write()
+            this.$db.get('trans_sentence')
+              .remove({ chapterId: id }).write()
+
             let novelInfo = this.$db.get('novel').find({ id: this.novelId }).value()
             this.$db.get('novel').find({ id: this.novelId }).assign({
               chapterNum: novelInfo.chapterNum - 1,
+              rawSentenceNum: novelInfo.rawSentenceNum - chapterInfo.rawSentenceNum,
+              wordsNum: novelInfo.wordsNum - novelInfo.wordsNum,
               updateTime: parseTime(new Date()) })
               .write()
             this.getChapterList()
