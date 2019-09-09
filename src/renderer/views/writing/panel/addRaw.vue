@@ -20,6 +20,7 @@
 
 <script>
     import { formatTime, parseTime } from '@/utils/index'
+    import regexUtil from '@/extends/regex'
 
     export default {
       data() {
@@ -36,14 +37,14 @@
           if (this.formdata.rawText.trim()) {
             const content = this.formdata.rawText
             // 全文正则过滤非法字符
-            const texts = []
-            const reg1 = /(\[NAME_TIPS_OFF\]\\|\[NAME_\w n="([^\]]+?)"\]\\)([\w\W]*?)(?=\[T_NEXT\]\\)/g
-            const reg2 = /(\[NAME_TIPS_OFF\]\\|\[NAME_\w n="([^\]]+?)"\]\\)([\w\W]*?)/
-            const reg1Arr = content.match(reg1)
-            reg1Arr.forEach(reg1Text => {
-              var reg2Text = reg1Text.replace(reg2, '$2$3')
-              texts.push(reg2Text)
-            })
+            const texts = regexUtil.parse(content)
+            // const reg1 = /(\[NAME_TIPS_OFF\]\\|\[NAME_\w n="([^\]]+?)"\]\\)([\w\W]*?)(?=\[T_NEXT\]\\)/g
+            // const reg2 = /(\[NAME_TIPS_OFF\]\\|\[NAME_\w n="([^\]]+?)"\]\\)([\w\W]*?)/
+            // const reg1Arr = content.match(reg1)
+            // reg1Arr.forEach(reg1Text => {
+            //   var reg2Text = reg1Text.replace(reg2, '$2$3')
+            //   texts.push(reg2Text)
+            // })
             this.createRawSentece(texts)
           }
         },

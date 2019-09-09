@@ -29,6 +29,16 @@ const db = Datastore(adapter)
 db._.mixin(LodashId)
 
 // 表结构
+if (!db.has('users').value()) {
+    db.set('users', [{
+        username: "admin",
+        password: "admin",
+        token: "123456abc",
+        name: "翻译官",
+        avatar: "http://img2.a0bi.com/upload/ttq/20141118/1416313582602.jpg",
+        roles: ['管理员']
+    }]).write()
+}
 if (!db.has('novel').value()) {
   db.set('novel', []).write()
 }

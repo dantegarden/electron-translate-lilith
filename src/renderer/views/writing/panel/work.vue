@@ -241,6 +241,7 @@
         checkTypeTextline(text){
             if(text){
                 const currentRaw = this.currentRawRow
+                text = text.replace(/\s*/g,"").replace("...", '...').replace("!", "！").replace("?", "？").replace(/\"/g,""); //去除空格
                 if(currentRaw.textline.startsWith("「")){
                     if(text.startsWith("“") && !text.endsWith("”")) text += "”";
                     else if(!text.startsWith("“") && text.endsWith("”")) text = "“"+text;

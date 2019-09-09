@@ -6,8 +6,8 @@ import random from 'string-random'
 import urlencode from 'urlencode'
 import utf8 from 'utf8'
 
-const baidu_appid = 'your appid'
-const baidu_secretKey = 'your secretKey'
+const baidu_appid = '20180430000151979'
+const baidu_secretKey = 'aicP4o0ApBpUva94Jlil'
 const baidu_translate = (text) => new Promise((resolve, reject) => {
   const salt = (new Date()).getTime()
   var str1 = baidu_appid + text + salt + baidu_secretKey
@@ -35,7 +35,7 @@ const baidu_translate = (text) => new Promise((resolve, reject) => {
   })
 })
 
-const caiyun_token = 'your token' // 临时
+const caiyun_token = '3975l6lr5pcbvidl6jl2' // 临时
 const caiyun_translate = (text) => new Promise((resolve, reject) => {
   const requestData = {
     source: [text],
@@ -61,8 +61,8 @@ const caiyun_translate = (text) => new Promise((resolve, reject) => {
   })
 })
 
-const tencent_appid = 'your appid'
-const tencent_appkey = 'your appkey'
+const tencent_appid = '2113501962'
+const tencent_appkey = 'O2GRqMJWBrNqYuKb'
 const tencent_translate = (text) => new Promise((resolve, reject) => {
   const time_stamp = parseInt((new Date()).getTime() / 1000)
   const nonce_str = random(10)

@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "electron-vue-admin",
+    "productName": "lilith-translator",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"
@@ -46,7 +46,7 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/tna.ico"
     },
     "linux": {
       "icon": "build/icons"

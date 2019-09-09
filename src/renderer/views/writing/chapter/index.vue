@@ -125,8 +125,8 @@
           const cond = this.queryCondition.chapterName ? this.queryCondition : {}
           cond.novelId = this.novelId
           const list = this.$db.get('chapter')
-            .filter(cond).sortBy('chapterNo')
-            .value()
+            .filter(cond).sortBy('updateTime')
+            .value().reverse()
           if (list) {
             this.chapterList = list
           }

@@ -1,5 +1,6 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import db from '../../../datastore/index'
 
 const user = {
   state: {
@@ -29,33 +30,34 @@ const user = {
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        let user = db.get("users").find({ username: username, password: userInfo.password}).value();
+        if(user){
+            setToken(user.token)
+            commit('SET_TOKEN', user.token)
+            resolve()
+        }else{
+          reject();
+        }
       })
     },
 
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', data.roles)
-          } else {
-            reject('getInfo: roles must be a non-null array !')
-          }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
+        let user = db.get("users").find({ token: state.token}).value();
+        if(user){
+            if (user.roles && user.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+                commit('SET_ROLES', user.roles)
+            } else {
+                reject('getInfo: roles must be a non-null array !')
+            }
+            commit('SET_NAME', user.name)
+            commit('SET_AVATAR', user.avatar)
+            resolve(user)
+        }else{
+          reject()
+        }
+
       })
     },
 
